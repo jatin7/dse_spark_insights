@@ -25,7 +25,9 @@ LoadPlugin python
 </Plugin>
 EOF
 
-git clone git@github.com:datastax/dse-metric-reporter-dashboards.git
+git clone https://github.com/datastax/dse-metric-reporter-dashboards.git
 cd dse-metric-reporter-dashboards
 
-docker-compose up
+pip install docker-compose
+
+docker-compose up &
