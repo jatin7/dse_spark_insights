@@ -35,6 +35,14 @@ EOF
 dsetool insights_config --mode ENABLED_WITH_LOCAL_STORAGE
 
 # grafana and prometheus
+
+PROMETHEUS_DATA_DIR=/mnt/ephemeral/prometheus
+GRAFANA_DATA_DIR=/mnt/ephemeral/grafana
+
+mkdir $PROMETHEUS_DATA_DIR
+mkdir $GRAFANA_DATA_DIR
+
+
 git clone https://github.com/datastax/dse-metric-reporter-dashboards.git
 cd dse-metric-reporter-dashboards
 
