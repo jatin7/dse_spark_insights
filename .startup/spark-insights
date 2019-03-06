@@ -1,30 +1,40 @@
 #/bin/bash
 
-cat << EOF > /etc/dse/collectd/10-spark.conf
-LoadPlugin python
-<Plugin python>
-  ModulePath "/opt/collectd-spark"
-
-  Import spark_plugin
-
-  <Module spark_plugin>
-  MetricsURL "http://127.0.0.1"
-  MasterPort 7080
-  WorkerPorts 7081 7082
-  Applications "True"
-  Master "http://127.0.0.1:7080"
-  Cluster "Standalone"
-  </Module>
-</Plugin>
-EOF
-
-dsetool insights_config --mode ENABLED_WITH_LOCAL_STORAGE
-
+# pull collectd spark
 git clone https://github.com/signalfx/collectd-spark
 
 mkdir /usr/share/dse/collectd/collectd-spark
 cp collectd-spark/spark_plugin.py /usr/share/dse/collectd/collectd-spark/
 
+
+# add config for collectd collectd spark plugin
+ln -s /usr/lib/python2.7/ /usr/share/dse/collectd/usr/lib/python2.7
+
+MASTER_URL=$(curl node0_ext:7080 -LIs | grep Location | awk -F' ' '{print $2}' | awk -F':' '{print $1 ":" $2}'
+)
+
+cat << EOF > /etc/dse/collectd/10-spark.conf
+LoadPlugin python
+<Plugin python>
+  ModulePath "/tmp/spark-insights/collectd-spark"
+
+  Import spark_plugin
+
+  <Module spark_plugin>
+  MetricsURL "$MASTER_URL"
+  MasterPort 7080
+  WorkerPorts 7081 7082
+  Applications "True"
+  Master "$MASTER_URL:7080"
+  Cluster "Standalone"
+  </Module>
+</Plugin>
+EOF
+
+# turn on collectd
+dsetool insights_config --mode ENABLED_WITH_LOCAL_STORAGE
+
+# grafana and prometheus
 git clone https://github.com/datastax/dse-metric-reporter-dashboards.git
 cd dse-metric-reporter-dashboards
 
