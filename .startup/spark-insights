@@ -13,6 +13,7 @@ ln -s /usr/lib/python2.7/ /usr/share/dse/collectd/usr/lib/python2.7
 MASTER_URL=$(curl node0_ext:7080 -LIs | grep Location | awk -F' ' '{print $2}' | awk -F':' '{print $1 ":" $2}'
 )
 
+mkdir /etc/dse/collectd/
 cat << EOF > /etc/dse/collectd/10-spark.conf
 LoadPlugin python
 <Plugin python>
@@ -23,7 +24,7 @@ LoadPlugin python
   <Module spark_plugin>
   MetricsURL "$MASTER_URL"
   MasterPort 7080
-  WorkerPorts 7081 7082
+  WorkerPorts 7081
   Applications "True"
   Master "$MASTER_URL:7080"
   Cluster "Standalone"
