@@ -30,6 +30,11 @@ LoadPlugin python
   Cluster "Standalone"
   </Module>
 </Plugin>
+LoadPlugin write_prometheus
+
+<Plugin write_prometheus>
+ Port “9103”
+</Plugin>
 EOF
 
 # turn on collectd
